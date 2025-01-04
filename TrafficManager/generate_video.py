@@ -46,7 +46,7 @@ def main(args):
         print("Error: Number of files in each category doesn't match.")
         return
 
-    first_frame = process_images(input_dir, [f[0] for f in files])
+    first_frame = process_images(input_dir, [f[0] for f  in files])
     height, width, _ = first_frame.shape
     
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')

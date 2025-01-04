@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2024-10-14 14:16:12 by Eclipse SUMO netconvert Version 1.20.0
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
+
+    <input>
+        <type-files value="${SUMO_HOME}/data/typemap/osmNetconvert.typ.xml,${SUMO_HOME}/data/typemap/osmNetconvertAerialway.typ.xml"/>
+        <osm-files value="osm_bbox.osm.xml.gz"/>
+    </input>
+
+    <output>
+        <output-file value="osm.net.xml.gz"/>
+        <output.street-names value="true"/>
+        <output.original-names value="true"/>
+        <ptstop-output value="osm_stops.add.xml"/>
+        <ptline-output value="osm_ptlines.xml"/>
+    </output>
+
+    <projection>
+        <proj.utm value="true"/>
+    </projection>
+
+    <processing>
+        <geometry.remove value="true"/>
+        <roundabouts.guess value="true"/>
+    </processing>
+
+    <tls_building>
+        <tls.discard-simple value="true"/>
+        <tls.join value="true"/>
+        <tls.guess-signals value="true"/>
+        <tls.default-type value="actuated"/>
+    </tls_building>
+
+    <ramp_guessing>
+        <ramps.guess value="true"/>
+    </ramp_guessing>
+
+    <junctions>
+        <junctions.join value="true"/>
+        <junctions.corner-detail value="5"/>
+    </junctions>
+
+    <railway>
+        <railway.topology.repair value="true"/>
+    </railway>
+
+</configuration>
+-->
+
+<additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/additional_file.xsd">
+    <busStop id="1734326824" name="宝盛路口北" lane="1150492423#1_0" startPos="25.56" endPos="40.56" friendlyPos="true"/>
+    <busStop id="9935563574" name="宝盛里小区" lane="1084226871_0" startPos="107.69" endPos="122.69" friendlyPos="true"/>
+    <busStop id="9935563575" name="宝盛里小区" lane="1150492422#2_0" startPos="117.96" endPos="132.96" friendlyPos="true"/>
+    <busStop id="9935568467" name="宝盛路口南" lane="161467863#4_0" startPos="20.22" endPos="35.22" friendlyPos="true"/>
+    <busStop id="9935568468" name="宝盛路口南" lane="1309352915#1_0" startPos="115.07" endPos="130.07" friendlyPos="true"/>
+    <busStop id="9935568469" name="龙岗路东口" lane="30705221#1_0" startPos="55.73" endPos="70.73" friendlyPos="true"/>
+    <busStop id="9935568470" name="龙岗路东口" lane="161467863#1_0" startPos="301.98" endPos="316.98" friendlyPos="true"/>
+</additional>
