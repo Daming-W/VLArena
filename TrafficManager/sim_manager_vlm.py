@@ -13,7 +13,6 @@ import requests
 import numpy as np
 import torch
 import cv2
-from PIL import Image
 from io import BytesIO
 import yaml
 from PIL import Image, ImageDraw, ImageFont
@@ -25,10 +24,30 @@ from LimSim.utils.trajectory import Trajectory, State
 from LimSim.trafficManager.traffic_manager import TrafficManager
 from LimSim.simModel.MPGUI import GUI
 from LimSim.simModel.Model import Model
-from LimSim.simModel.DataQueue import CameraImages
+from LimSim .simModel.DataQueue import CameraImages
 from TrafficManager.utils.matplot_render import MatplotlibRenderer
 from LimSim.simInfo.CustomExceptions import CollisionChecker, OffRoadChecker
 from TrafficManager.utils.scorer import Scorer
+from vlm_utils import add_interpolate_traj,world_to_ego
+from collections import deque
+ports = [11000,11002]
+# Use lsof to check which process is using the port and kill the first one foundt
+if 0:
+    for port in ports:
+        result = os.popen(f"lsof -i :{port}").read()
+        lines = result.splitlines()
+        # Skip the header line and find the PID
+        if len(lines) > 1:
+            pid_line = lines[1]  # First line after the header
+            pid = pid_line.split()[1]  # PID is the second column
+
+            # Kill the process
+            os.system(f"kill -9 {pid}")
+            f"Process {pid} using port {port} has been terminated."
+        else:
+            "No process found using port {port}."
+    exit()
+
 def parse_trajectory(traj_string):
     # Convert a trajectory string into a list of (x, y) tuples
     try:
@@ -118,33 +137,33 @@ class SimulationManager:
                 image = Image.open(BytesIO(img_data))
                 images_array = np.array(np.split(np.array(image), 6, axis=0))
                 combined_image = np.vstack(
-                    (np.hstack(images_array[:3]), np.hstack(images_array[3:])))
+                    (np.hstack(images_array[:3]), np.hstack(images_array[3:][::-1])))
                 cv2.imwrite(f"{self.img_save_path}diffusion_{str(int(self.timestamp*2)).zfill(3)}.jpg",
                             cv2.cvtColor(combined_image, cv2.COLOR_RGB2BGR))
                 return content,np.array(np.split(np.array(image), 6, axis=0))
         except requests.exceptions.RequestException as e:
            print(f"Warning: Request failed due to {e}")
         return None,None
-    def send_request_driver(self, content: Dict) -> Optional[np.ndarray]:
-        try:
-            print(f"Sending data to WorldDreamer server...")
-            response = requests.post(
-                self.DIFFUSION_SERVER + "driver-api/", json=content)
-            #if response.status_code == 200 and 'image' in response.headers['Content-Type']:
-            if response.status_code == 200 and 'application/json' in response.headers['Content-Type']:
-                content = response.json()
-                #print(content.keys())#dict_keys(['timestamp', 'img_byte_array', 'ego_pose', 'command', 'accel', 'rotation_rate', 'vel'])
-                img_data = base64.b64decode(content['img_byte_array'])
-                image = Image.open(BytesIO(img_data))
-                images_array = np.array(np.split(np.array(image), 6, axis=0))
-                combined_image = np.vstack(
-                    (np.hstack(images_array[:3]), np.hstack(images_array[3:])))
-                cv2.imwrite(f"{self.img_save_path}diffusion_{str(int(self.timestamp*2)).zfill(3)}.jpg",
-                            cv2.cvtColor(combined_image, cv2.COLOR_RGB2BGR))
-                return np.array(np.split(np.array(image), 6, axis=0))
-        except requests.exceptions.RequestException as e:
-           print(f"Warning: Request failed due to {e}")
-        return None
+    # def send_request_driver(self, content: Dict) -> Optional[np.ndarray]:
+    #     try:
+    #         print(f"Sending data to WorldDreamer server...")
+    #         response = requests.post(
+    #             self.DIFFUSION_SERVER + "driver-api/", json=content)
+    #         #if response.status_code == 200 and 'image' in response.headers['Content-Type']:
+    #         if response.status_code == 200 and 'application/json' in response.headers['Content-Type']:
+    #             content = response.json()
+    #             #print(content.keys())#dict_keys(['timestamp', 'img_byte_array', 'ego_pose', 'command', 'accel', 'rotation_rate', 'vel'])
+    #             img_data = base64.b64decode(content['img_byte_array'])
+    #             image = Image.open(BytesIO(img_data))
+    #             images_array = np.array(np.split(np.array(image), 6, axis=0))
+    #             combined_image = np.vstack(
+    #                 (np.hstack(images_array[:3]), np.hstack(images_array[3:][::-1])))
+    #             cv2.imwrite(f"{self.img_save_path}diffusion_{str(int(self.timestamp*2)).zfill(3)}.jpg",
+    #                         cv2.cvtColor(combined_image, cv2.COLOR_RGB2BGR))
+    #             return np.array(np.split(np.array(image), 6, axis=0))
+    #     except requests.exceptions.RequestException as e:
+    #        print(f"Warning: Request failed due to {e}")
+    #     return None
     def get_drivable_mask(self, model: Model) -> np.ndarray:
         img = np.zeros((self.IMAGE_SIZE, self.IMAGE_SIZE), dtype=np.uint8)
         roadgraphRenderData, VRDDict = model.renderQueue.get()
@@ -179,6 +198,10 @@ class SimulationManager:
 
         self.renderer = MatplotlibRenderer()
         self.checkers = [OffRoadChecker(), CollisionChecker()]
+        x_val = deque(maxlen=7)
+        y_val = deque(maxlen=7)
+        self.past_traj = [x_val,y_val]
+        self.ego_past_traj = []
 
     def process_frame(self):
         # Single frame processing logic
@@ -192,7 +215,6 @@ class SimulationManager:
             print(
                 f"WARNING: Checker failed @ timestep {self.model.timeStep}. {e}")
             raise e
-        print('P'*200)
         drivable_mask = self.get_drivable_mask(self.model)
         if self.model.timeStep % 5 == 0:
             self.timestamp += 0.5
@@ -237,6 +259,7 @@ class SimulationManager:
             #content['vel']= ([round(v,2) for v in content['vel']])
             content['ego_pose'] = quat
             content['command'] = command
+            content['past_traj'] = self.ego_past_traj
             #print(content['accel'], content['rotation_rate'], content['vel'])
             #self.send_request_driver(content)
             if gen_images is not None:
@@ -271,18 +294,11 @@ class SimulationManager:
 
             traj.insert(0, [0.0, 0.0])
             ego_vehicle = self.vehicles['egoCar']
+            self.past_traj[0].append(ego_vehicle["xQ"][-1])
+            self.past_traj[1].append(ego_vehicle["yQ"][-1])
             ego_traj = interpolate_traj(ego_vehicle, traj)
-            print('T'*100,traj,ego_traj)
-            exit()
-            # add driver predict BEV
-            # pred_bev_base64 = #blank img 1000*1000
-            # pred_bev_img = base64.b64decode(pred_bev_base64)
-            # pred_bev_img = Image.open(io.BytesIO(pred_bev_img))
-            # # save image
-            # pred_bev_img = pred_bev_img.convert("RGB")
-            # pred_bev_img.save(
-            #     f"{self.img_save_path}agent_{str(int(self.timestamp*2)).zfill(3)}.jpg"
-            # )
+
+
             if len(limsim_trajectories[self.EGO_ID].states) < 10:
                 yaw_rate = 0
             else:
@@ -293,9 +309,13 @@ class SimulationManager:
             vy_1, vy_2 = traj[2][1] - \
                 traj[0][1], traj[3][1] - traj[1][1]
             ax, ay = (vx_2 - vx_1) / 0.5, (vy_2 - vy_1) / 0.5
-            self.accel = [ax, ay, 9.80]
-            self.rotation_rate = [0, 0, yaw_rate]
-            self.vel = [limsim_trajectories[self.EGO_ID].states[0].vel, 0, 0]
+            self.accel = [ax, ay, 9.80]#assume no z axis accel
+            self.rotation_rate = [0, 0, yaw_rate]#only yaw angle
+            tot_vel = limsim_trajectories[self.EGO_ID].states[0].vel
+            self.vel = [tot_vel, 0, 0]#total v instead of in x,y axis
+            v_x = tot_vel * math.cos(yaw_rate)  # Velocity in the x direction
+            v_y = tot_vel * math.sin(yaw_rate)  # Velocity in the y direction
+            #print('V'*100,self.vel,len(limsim_trajectories[self.EGO_ID].states),[q.t for q in limsim_trajectories[self.EGO_ID].states])
             print("Accel:", self.accel, "\nRotation rate:",
                   self.rotation_rate, "\nVel:", self.vel)
             self.model.putRenderData()
@@ -312,14 +332,18 @@ class SimulationManager:
 
             # Draw the text
             draw.text(text_position, command, font=font, fill="black") 
-            # Save the modified image
+            # traj = custom_interpolate_traj(ego_vehicle, path_points)# convert to world coordinate
+            # traj = [[-point[0],-point[1]] for point in traj]
+            add_interpolate_traj(draw, image.width,traj,self.ego_past_traj)
+            self.ego_past_traj = world_to_ego(self.past_traj,ego_vehicle)
+            #add_traj(draw,image.width,traj)
             image.save(img_path)
             self.scorer.record_frame(drivable_mask, is_planning_frame=True,
                                      planned_traj=ego_traj, ref_traj=limsim_trajectories[self.EGO_ID])
 
             limsim_trajectories = {}
-            if self.USE_AGENT_PATH and self.timestamp > 1.0:
-                ## Because first two frames, drive agents may not ready
+            if self.USE_AGENT_PATH and self.timestamp > 2.5:
+                ## Because first 3 seconds, drive agents may not ready
                 print(f"Use agent path to drive.")
                 limsim_trajectories[self.EGO_ID] = ego_traj
             self.model.setTrajectories(limsim_trajectories)

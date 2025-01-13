@@ -6,15 +6,15 @@ servers:
 
 # Simulation Configuration
 simulation:
-  ego_id: '2333'
+  ego_id: '283'
   step_length: 0.1
   gui_display: true
   max_sim_time: 200.0
-  use_agent_path: true # false for open-loop, true for closed-loop
+  use_agent_path: false # false for open-loop, true for closed-loop
 
 # Map Configuration
 map:
-  name: 'boston-thomaspark' #'boston-thomaspark' #'CarlaTown05' #'boston-seaport'
+  name: 'boston-thomaspark' #'singapore-onenorth' #'CarlaTown05' #'boston-seaport'
   gen_description: 'daytime, sunny, downtown, black buildings, white cars'
   sumo_cfg_file: "networkFiles/{map_name}/osm.sumocfg"
   sumo_net_file: "networkFiles/{map_name}/osm.net.xml"
