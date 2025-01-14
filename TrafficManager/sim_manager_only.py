@@ -239,7 +239,7 @@ class SimulationManager:
 
 
 def main():
-    sim_manager = SimulationManager("config.yaml")
+    sim_manager = SimulationManager("TrafficManager/config.yaml")
     sim_manager.run_simulation()
 
 

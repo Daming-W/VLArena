@@ -1,20 +1,21 @@
 # Server Configuration
 servers:
-  diffusion: "http://127.0.0.1:11002/"
-  driver: "http://127.0.0.1:11003/"
+  diffusion: "http://127.0.0.1:11000/"
+  driver: "http://127.0.0.1:11001/"
+  vlm_driver: "http://127.0.0.1:11002/"
 
 # Simulation Configuration
 simulation:
   ego_id: '283'
   step_length: 0.1
   gui_display: true
-  max_sim_time: 100.0
+  max_sim_time: 200.0
   use_agent_path: false # false for open-loop, true for closed-loop
 
 # Map Configuration
 map:
-  name: 'boston-seaport'
-  gen_description: 'daytime, cloudy, downtown, red buildings, white cars'
+  name: 'boston-thomaspark' #'singapore-onenorth' #'CarlaTown05' #'boston-seaport'
+  gen_description: 'daytime, sunny, downtown, black buildings, white cars'
   sumo_cfg_file: "networkFiles/{map_name}/osm.sumocfg"
   sumo_net_file: "networkFiles/{map_name}/osm.net.xml"
   sumo_rou_file: "networkFiles/{map_name}/osm.rou.xml"

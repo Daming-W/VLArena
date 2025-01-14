@@ -18,4 +18,4 @@ sync_vehicle_lights: True
 database: 'visionCloseLoop.db'
 
 # Decision settings
-decision_frequency: 2 # Hz
+decision_frequency: 20 # Hz

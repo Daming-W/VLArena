@@ -228,7 +228,6 @@ def interpolate_traj(ego_vehicle, path_points, Ti_path=0.5) -> Trajectory:
     )
     ego_vel, ego_acc = ego_vehicle["speedQ"][-1], ego_vehicle["accelQ"][-1]
     Ti_traj = 0.1
-
     global_points = [
         (
             ego_x
@@ -262,7 +261,6 @@ def interpolate_traj(ego_vehicle, path_points, Ti_path=0.5) -> Trajectory:
 
         states.append(State(t=i * Ti_path, x=x2, y=y2,
                       yaw=yaw, vel=vel, acc=acc))
-
     trajectory = Trajectory()
     for i in range(1, len(states)):
         prev_state, curr_state = states[i - 1], states[i]
@@ -283,5 +281,4 @@ def interpolate_traj(ego_vehicle, path_points, Ti_path=0.5) -> Trajectory:
                 )
             )
             t += Ti_traj
-
-    return trajectory
+    return trajectory # separated by 0.1s
