@@ -30,7 +30,9 @@ Describe the process, tools, and methods used for data auto-labeling.
 
 ## VLM for Autonomous Driving 🚗
 
-Explain the application and advantages of Vision-Language Models (VLM) in autonomous driving.
+The driving agent in VLArena is designed to leverage Multimodal Large Language Models (MLLMs) to process complex visual data and reason about driving scenarios, enabling efficient and effective autonomous driving. Specifically, we have replicated the core functionality of closed-source models like EMMA from Waymo.
+
+This project is developed based on LLaMA-Factory and uses various open-source pre-trained VLM solutions, such as Qwen2VL and LLaVA. Through the Chain-of-Thought (CoT) reasoning process, the agent generates detailed object descriptions, behavioral insights, and meta-driving decisions. It directly infers the necessary context required by the model to generate waypoints.
 
 ## DriveArena Platform 🛠️
 
