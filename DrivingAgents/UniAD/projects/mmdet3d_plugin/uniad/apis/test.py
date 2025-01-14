@@ -293,7 +293,7 @@ def custom_single_gpu_test(model, data_loader, tmpdir=None, gpu_collect=False, *
     # time.sleep(2)  # This line can prevent deadlock problem in some cases.
     have_mask = False
     num_occ = 0
-    for i, data in enumerate(data_loader):
+    for i, data in enumerate(data_loader):#dict_keys(['img_metas', 'command', 'timestamp', 'img', 'l2g_r_mat', 'l2g_t'])
         with torch.no_grad():
             for key in data.keys():
                 if isinstance(data[key][0], DataContainer):
@@ -305,11 +305,16 @@ def custom_single_gpu_test(model, data_loader, tmpdir=None, gpu_collect=False, *
                     data[key] = data[key].cuda()
                 if isinstance(data[key][0], torch.Tensor) and data[key][0].device.type == 'cpu':
                         data[key][0] = data[key][0].cuda()
-            result = model(return_loss=False, rescale=True, **data)
+            result = model(return_loss=False, rescale=True, **data)# list of len=1
 
             # EVAL planning
             result[0]['planning_traj'] = result[0]['planning']['result_planning']['sdc_traj']
             result[0]['command'] = result[0]['planning']['planning_gt']['command']
+            '''dict_keys(['occ', 'planning', 'token', 'track_bbox_results', 'boxes_3d', 'scores_3d',
+             'labels_3d', 'track_scores', 'track_ids', 'sdc_boxes_3d', 'sdc_scores_3d', 'sdc_track_scores', 
+             'sdc_track_bbox_results', 'boxes_3d_det', 'scores_3d_det', 'labels_3d_det', 'traj_0', 
+             'traj_scores_0', 'traj_1', 'traj_scores_1', 'traj', 'traj_scores', 'pts_bbox', 'ret_iou',
+              'planning_traj', 'command'])'''
             if eval_planning:
                 # TODO: Wrap below into a func
                 segmentation = result[0]['planning']['planning_gt']['segmentation']
@@ -318,7 +323,7 @@ def custom_single_gpu_test(model, data_loader, tmpdir=None, gpu_collect=False, *
                 pred_sdc_traj = result[0]['planning']['result_planning']['sdc_traj']
                 result[0]['planning_traj_gt'] = result[0]['planning']['planning_gt']['sdc_planning']
                 planning_metrics(pred_sdc_traj[:, :6, :2], sdc_planning[0][0,:, :6, :2], sdc_planning_mask[0][0,:, :6, :2], segmentation[0][:, [1,2,3,4,5,6]])
-
+            #result[0]['planning_traj']: shape 1*6*2    result[0]['command'] : 0,1,2
             # Eval Occ
             if eval_occ:
                 occ_has_invalid_frame = data['gt_occ_has_invalid_frame'][0]
@@ -333,7 +338,7 @@ def custom_single_gpu_test(model, data_loader, tmpdir=None, gpu_collect=False, *
                                                 result[0]['occ']['ins_seg_gt'][..., limits, limits].contiguous())
 
             # Pop out unnecessary occ results, avoid appending it to cpu when collect_results_cpu
-            if os.environ.get('ENABLE_PLOT_MODE', None) is None:
+            if os.environ.get('ENABLE_PLOT_MODE', None) is None:#True
                 result[0].pop('occ', None)
                 result[0].pop('planning', None)
             else:
@@ -345,7 +350,7 @@ def custom_single_gpu_test(model, data_loader, tmpdir=None, gpu_collect=False, *
                         result[0]['pts_bbox'][k] = result[0]['pts_bbox'][k].detach().cpu()
 
             # encode mask results
-            if isinstance(result, dict):
+            if isinstance(result, dict):#False!
                 if 'bbox_results' in result.keys():
                     bbox_result = result['bbox_results']
                     batch_size = len(result['bbox_results'])
@@ -355,9 +360,8 @@ def custom_single_gpu_test(model, data_loader, tmpdir=None, gpu_collect=False, *
                     mask_results.extend(mask_result)
                     have_mask = True
             else:
-                batch_size = len(result)
+                batch_size = len(result)#1
                 bbox_results.extend(result)
-
         if rank == 0:
             for _ in range(batch_size * world_size):
                 prog_bar.update()
@@ -404,5 +408,11 @@ def custom_single_gpu_test(model, data_loader, tmpdir=None, gpu_collect=False, *
 
     if mask_results is not None:
         ret_results['mask_results'] = mask_results
+    #ret_results#   keys(['bbox_results' (len=1), 'mask_results' (len=0)])
+    ''''bbox_results': len==1, dict_keys(['token', 'track_bbox_results', 'boxes_3d', 
+    'scores_3d', 'labels_3d', 'track_scores', 'track_ids', 'sdc_boxes_3d', 'sdc_scores_3d', 
+    'sdc_track_scores', 'sdc_track_bbox_results', 'boxes_3d_det', 'scores_3d_det', 'labels_3d_det', 
+    'traj_0', 'traj_scores_0', 'traj_1', 'traj_scores_1', 'traj', 'traj_scores', 'pts_bbox', 
+    'ret_iou', 'planning_traj', 'command']'''
     return ret_results
 

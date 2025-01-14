@@ -100,6 +100,8 @@ def main(cfg: DictConfig):
 
         # You can change the description by the folowing code.
         val_input['captions'] = ['A driving scene image at boston-seaport. night, clear, downtown, straight road, white buildings, construction zone.']
+        ''' val_input keys: ['bev_map_with_aux', 'camera_param', 'kwargs', 'pixel_values', 'captions', 'input_ids', 'uncond_ids', 'meta_data', 'layout_canvas', 'bev_hdmap', 'ref_images', 'relative_pose'])
+        '''
         return_tuples = run_one_batch(cfg, pipe, val_input, weight_dtype,
                                       transparent_bg=cfg.transparent_bg,
                                       map_size=target_map_size)

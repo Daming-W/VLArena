@@ -72,5 +72,4 @@ class BEVControlNetConditioningEmbedding(nn.Module):
             embedding = F.silu(embedding)
 
         embedding = self.conv_out(embedding)
-
         return embedding

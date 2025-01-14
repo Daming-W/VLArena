@@ -1,6 +1,6 @@
 import argparse
 
-from data_converter import nuscenes_converter as nuscenes_converter, nuplan_converter
+from tools.data_converter import nuscenes_converter as nuscenes_converter, nuplan_converter
 # this called data_converter from mmdet3d
 from tools.data_converter.create_gt_database import create_groundtruth_database
 

@@ -186,3 +186,14 @@ outputs/
 *.ipynb
 *.h5
 WorldDreamer/pretrained/
+WorldDreamer/ckpt/
+WorldDreamer/nuscenes/
+WorldDreamer/nuscenes_cc/
+DrivingAgents/UniAD/CAMixerSR/
+DrivingAgents/VAD/CAMixerSR/
+WorldDreamer/ASAP/
+WorldDreamer/third_party/mmcv/
+DrivingAgents/VAD/mmdetection3d/
+*.bin
+*.pth
+*.safetensors

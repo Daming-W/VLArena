@@ -204,7 +204,7 @@ class SingleRefControlNetModel(ModelMixin, ConfigMixin):
         elif class_embed_type == "identity":
             self.class_embedding = nn.Identity(time_embed_dim, time_embed_dim)
         elif class_embed_type == "projection":
-            if projection_class_embeddings_input_dim is None:
+            if projection_class_embeddings_input_dim is None:   
                 raise ValueError(
                     "`class_embed_type`: 'projection' requires `projection_class_embeddings_input_dim` be set"
                 )
@@ -794,11 +794,11 @@ class SingleRefControlNetModel(ModelMixin, ConfigMixin):
     # @torchsnooper.snoop()
     def forward(
         self,
-        sample: torch.FloatTensor,    # noisy img feat
-        timestep: Union[torch.Tensor, float, int],
-        camera_param: torch.Tensor,
+        sample: torch.FloatTensor,    # noisy img feat [2, 6, 4, 28, 50]
+        timestep: Union[torch.Tensor, float, int], #reverse from 1000
+        camera_param: torch.Tensor,#[2, 6, 3, 7]
         bboxes_3d_data: Dict[str, Any],
-        encoder_hidden_states: torch.Tensor,    # text embedding
+        encoder_hidden_states: torch.Tensor,    # text embedding 2, 77, 768]
         bev_hdmap: torch.FloatTensor,    # b, 3, 200, 200
         rel_pose: torch.FloatTensor,    # b, 4, 4
         ref_images: torch.FloatTensor,    # b, 6, 96,768
@@ -807,7 +807,7 @@ class SingleRefControlNetModel(ModelMixin, ConfigMixin):
         conditioning_scale: float = 1.0,
         class_labels: Optional[torch.Tensor] = None,
         timestep_cond: Optional[torch.Tensor] = None,
-        attention_mask: Optional[torch.Tensor] = None,
+        attention_mask: Optional[torch.Tensor] = None,#None
         cross_attention_kwargs: Optional[Dict[str, Any]] = None,
         guess_mode: bool = False,
         return_dict: bool = True,
@@ -815,7 +815,6 @@ class SingleRefControlNetModel(ModelMixin, ConfigMixin):
     ) -> Union[BEVControlNetOutput, Tuple]:
         # check channel order
         channel_order = self.config.controlnet_conditioning_channel_order
-        
         if channel_order == "rgb":
             # in rgb order by default
             ...
@@ -834,7 +833,7 @@ class SingleRefControlNetModel(ModelMixin, ConfigMixin):
         # 0. camera
         N_cam = camera_param.shape[1]
         camera_emb = self._embed_camera(camera_param)    # [b, 6, 189]
-        encoder_hidden_states_with_cam = self.add_cam_states(
+        encoder_hidden_states_with_cam = self.add_cam_states(#MLP to align cam with text tokens, concate.
             encoder_hidden_states, camera_emb
         )    # [b, 6, 32, 768]
 
@@ -850,7 +849,6 @@ class SingleRefControlNetModel(ModelMixin, ConfigMixin):
 
         # 0.1. rel_pose embedding
         encoder_hidden_states_with_cam = self.add_rel_pose_states(encoder_hidden_states_with_cam, rel_pose=rel_pose)    # [b*N_cam, C, 768]
-
         # 0.5. bbox embeddings
         # bboxes data should follow the format of (B, N_cam or 1, max_len, ...)
         # for each view
@@ -858,8 +856,8 @@ class SingleRefControlNetModel(ModelMixin, ConfigMixin):
             bbox_embedder_kwargs = {}
             for k, v in bboxes_3d_data.items():
                 bbox_embedder_kwargs[k] = v.clone()
-            if self.drop_cam_with_box and uncond_mask is not None:
-                _, n_box = bboxes_3d_data["bboxes"].shape[:2]
+            if self.drop_cam_with_box and uncond_mask is not None:#False
+                _, n_box = bboxes_3d_data["bboxes"].shape[:2]#[2, 6, 29, 8, 3]) 
                 if n_box != N_cam:
                     assert n_box == 1, "either N_cam or 1."
                     for k in bboxes_3d_data.keys():
@@ -875,7 +873,7 @@ class SingleRefControlNetModel(ModelMixin, ConfigMixin):
             for k in bboxes_3d_data.keys():
                 bbox_embedder_kwargs[k] = rearrange(
                     bbox_embedder_kwargs[k], 'b n ... -> (b n) ...')
-            bbox_emb = self.bbox_embedder(**bbox_embedder_kwargs)    # [b*N_cam, 16, 768]
+            bbox_emb = self.bbox_embedder(**bbox_embedder_kwargs)    # [b*N_cam, num_bbox, 768]
             if n_box != N_cam:
                 # n_box should be 1: all views share the same set of bboxes, we repeat
                 bbox_emb = repeat(bbox_emb, 'b ... -> b n ...', n=N_cam)
@@ -892,7 +890,6 @@ class SingleRefControlNetModel(ModelMixin, ConfigMixin):
             encoder_hidden_states_with_cam = torch.cat([
                 encoder_hidden_states_with_cam, ref_images
             ], dim=2)
-        
         # 1. time
         timesteps = timestep
         if not torch.is_tensor(timesteps):
@@ -919,10 +916,8 @@ class SingleRefControlNetModel(ModelMixin, ConfigMixin):
         # but time_embedding might actually be running in fp16. so we need to cast here.
         # there might be better ways to encapsulate this.
         t_emb = t_emb.to(dtype=self.dtype)
-
-        emb = self.time_embedding(t_emb, timestep_cond)    # [3, 1280]
-
-        if self.class_embedding is not None:
+        emb = self.time_embedding(t_emb, timestep_cond)    # [2, 1280]
+        if self.class_embedding is not None:# False
             if class_labels is None:
                 raise ValueError(
                     "class_labels should be provided when num_class_embeds > 0"
@@ -933,7 +928,6 @@ class SingleRefControlNetModel(ModelMixin, ConfigMixin):
 
             class_emb = self.class_embedding(class_labels).to(dtype=self.dtype)
             emb = emb + class_emb
-
         # BEV: we remap data to have (B n) as batch size
         sample = rearrange(sample, 'b n ... -> (b n) ...')
         encoder_hidden_states_with_cam = rearrange(
@@ -944,13 +938,11 @@ class SingleRefControlNetModel(ModelMixin, ConfigMixin):
             bev_hdmap, 'b ... -> (b repeat) ...', repeat=N_cam)
 
         # 2. pre-process
-        sample = self.conv_in(sample)    # [b*N_cam, 320, 28, 50]
+        sample = self.conv_in(sample) #[12, 4, 28, 50] -> [b*N_cam, 320, 28, 50]
         bev_hdmap_cond = self.controlnet_cond_embedding(bev_hdmap)    # [b, C_map, 200, 200]->[b*N_cam, 320, 28, 50]
-        layout_cond = self.controlnet_layout_embedding(rearrange(layout_canvas, 'b n ... -> (b n) ...'))    # [b*N_cam, 320, 28, 50]
+        layout_cond = self.controlnet_layout_embedding(rearrange(layout_canvas, 'b n ... -> (b n) ...'))    #b*6, 13, 224, 400-> [b*N_cam, 320, 28, 50]
         # refimg_cond = self.controlnet_refimg_embedding(rearrange(ref_images, 'b n ... -> (b n) ...'))    # [b*N_cam, 320, 28, 50]
-
         sample += bev_hdmap_cond + layout_cond
-
         # 3. down
         down_block_res_samples = (sample,)
         for downsample_block in self.down_blocks:
@@ -970,7 +962,6 @@ class SingleRefControlNetModel(ModelMixin, ConfigMixin):
                     hidden_states=sample, temb=emb)
 
             down_block_res_samples += res_samples
-
         # 4. mid
         if self.mid_block is not None:
             sample = self.mid_block(
@@ -980,7 +971,6 @@ class SingleRefControlNetModel(ModelMixin, ConfigMixin):
                 attention_mask=attention_mask,
                 cross_attention_kwargs=cross_attention_kwargs,
             )
-
         # 5. Control net blocks
 
         controlnet_down_block_res_samples = ()

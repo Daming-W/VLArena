@@ -71,7 +71,6 @@ class Custom3DDataset(Dataset):
         # set group flag for the sampler
         if not self.test_mode:
             self._set_group_flag()
-
         self.epoch = -1
     
     def set_epoch(self, epoch):

@@ -212,7 +212,7 @@ async def process(request: Request, background_tasks: BackgroundTasks):
     ego_pose = torch.tensor(param.get('ego_pose', None))
     base64_image_bytes = base64.b64decode(base64_image)
     img = Image.open(io.BytesIO(base64_image_bytes)).convert('RGB')
-    gen_imgs = split_image(img, 224)
+    gen_imgs = split_image(img, 224)# split gen imgs from dreamer
     # 图像替换
     uniad_img_vis_list = []
     uniad_img_list = []

@@ -3,7 +3,7 @@
 #############################
 
 # create ann_info
-python tools/create_data.py nuscenes --root-path /cpfs01/shared/public/ADLab/datasets/nuscenes --out-dir ./data/nuscenes_mmdet3d-12Hz --extra-tag nuscenes_interp_12Hz --max-sweeps -1 --version interp_12Hz_trainval
+python tools/create_data.py nuscenes --root-path nuscenes --out-dir ./data/nuscenes_mmdet3d-12Hz --extra-tag nuscenes_interp_12Hz --max-sweeps -1 --version interp_12Hz_trainval
 
 # "nuscenes_interp_12Hz_dbinfos_train.pkl" can be moved to `../data/nuscenes_mmdet3d-12Hz/`
 

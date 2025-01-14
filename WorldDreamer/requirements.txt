@@ -1,4 +1,4 @@
-tensorboard==2.11.2  # pytorch need this. do not use tensorboardX
+tensorboard==2.18.0  # pytorch need this. do not use tensorboardX
 accelerate==0.20.3  # from whl
 transformers==4.27.4  # for diffusers
 # datasets

@@ -355,7 +355,6 @@ def run_one_batch(
         val_input["kwargs"],
         global_generator=global_generator,
     )
-
     # map
     map_imgs = []
     for bev_map in val_input["bev_hdmap"]:

@@ -101,8 +101,8 @@ class StableDiffusionSingleRefControlNetPipeline(StableDiffusionControlNetPipeli
     def __call__(
         self,
         prompt: Union[str, List[str]],
-        bev_hdmap: torch.FloatTensor,
-        camera_param: Union[torch.Tensor, None],
+        bev_hdmap: torch.FloatTensor,#1, 4, 200, 200]
+        camera_param: Union[torch.Tensor, None],#6*3*7
         rel_pose: torch.FloatTensor,    # b, 4, 4
         ref_images: torch.FloatTensor,    # b, 6, 3, 224, 400
         layout_canvas: torch.FloatTensor,    # b, 6, 13, 224, 400
@@ -273,17 +273,17 @@ class StableDiffusionSingleRefControlNetPipeline(StableDiffusionControlNetPipeli
         # 4. Prepare image
         # NOTE: if image is not tensor, there will be several process.
         assert not self.control_image_processor.config.do_normalize, "Your controlnet should not normalize the control image."
-        image = self.prepare_image(
-            image=bev_hdmap,
-            width=width,
-            height=height,
+        image = self.prepare_image(#
+            image=bev_hdmap,#1,4,200,400
+            width=width,#400
+            height=height,#224
             batch_size=batch_size * num_images_per_prompt,
             num_images_per_prompt=num_images_per_prompt,
             device=device,
             dtype=self.controlnet.dtype,
             do_classifier_free_guidance=do_classifier_free_guidance,
             guess_mode=guess_mode,
-        )  # (2 * b, c_26, 200, 200)
+        )  # (2 * b, 4 200, 200)
         if use_zero_map_as_unconditional and do_classifier_free_guidance:
             # uncond in the front, cond in the tail
             _images = list(torch.chunk(image, 2))
@@ -297,7 +297,7 @@ class StableDiffusionSingleRefControlNetPipeline(StableDiffusionControlNetPipeli
         # 6. Prepare latent variables
         num_channels_latents = self.unet.config.in_channels
         if not use_ref_img_in_noise:
-            latents = self.prepare_latents(
+            latents = self.prepare_latents(# [1, 4, 28, 50])
                 batch_size * num_images_per_prompt,
                 num_channels_latents,
                 height,
@@ -317,8 +317,6 @@ class StableDiffusionSingleRefControlNetPipeline(StableDiffusionControlNetPipeli
                 device,
                 generator,
             )
-            
-
         # 7. Prepare extra step kwargs.
         extra_step_kwargs = self.prepare_extra_step_kwargs(generator, eta)
 
@@ -336,8 +334,7 @@ class StableDiffusionSingleRefControlNetPipeline(StableDiffusionControlNetPipeli
         rel_pose = move_to(rel_pose, self.device)
         ref_images =  move_to(ref_images, self.device)
         layout_canvas =  move_to(layout_canvas, self.device)
-
-        if do_classifier_free_guidance and not guess_mode:
+        if do_classifier_free_guidance and not guess_mode: #True
             # if camera_params_raw is not None:
             #     camera_params_raw = {
             #         k: torch.cat([v] * 2) for k, v in camera_params_raw.items()
@@ -361,7 +358,6 @@ class StableDiffusionSingleRefControlNetPipeline(StableDiffusionControlNetPipeli
             _images[0] = kwargs_with_uncond.pop("image")
             image = torch.cat(_images)
             bev_controlnet_kwargs = move_to(kwargs_with_uncond, self.device)
-
             if self.embedder is not None:
                 image_tensor = rearrange(ref_images, "b n c h w -> (b n) c h w")
                 # img: b c h w >> b l c
@@ -370,7 +366,6 @@ class StableDiffusionSingleRefControlNetPipeline(StableDiffusionControlNetPipeli
                     ref_images = self.image_proj_model(ref_images)
                 ref_images = rearrange(ref_images, "(b n) c l -> b n c l", n=N_cam)
             
-
         ###### BEV end ######
 
         # 8. Denoising loop
@@ -417,7 +412,6 @@ class StableDiffusionSingleRefControlNetPipeline(StableDiffusionControlNetPipeli
                     **bev_controlnet_kwargs, # for BEV
                 )
                 # fmt: on
-
                 if guess_mode and do_classifier_free_guidance:
                     # Infered ControlNet only for the conditional batch.
                     # To apply the output of ControlNet to both the unconditional and conditional batches,
@@ -434,7 +428,6 @@ class StableDiffusionSingleRefControlNetPipeline(StableDiffusionControlNetPipeli
                         prompt_embeds.chunk(2)[0], N_cam,
                         encoder_hidden_states_with_cam,
                     )
-
                 # =============================================================
                 # Strating from here, we use 4-dim data.
                 # encoder_hidden_states_with_cam: (2b x N), 78, 768
@@ -484,7 +477,6 @@ class StableDiffusionSingleRefControlNetPipeline(StableDiffusionControlNetPipeli
                     progress_bar.update()
                     if callback is not None and i % callback_steps == 0:
                         callback(i, t, latents)
-
         ###### BEV: here rebuild the shapes back. post-process still assume
         # latents, no need for b, n, 4, 28, 50
         # prompt_embeds, no need for b, len, 768
