@@ -179,7 +179,6 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-
 *.db
 results/
 outputs/
@@ -197,3 +196,5 @@ DrivingAgents/VAD/mmdetection3d/
 *.bin
 *.pth
 *.safetensors
+#Custom
+!/mnt/ve_share/hezijian/LLaMA-Factory
