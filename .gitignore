@@ -198,3 +198,4 @@ DrivingAgents/VAD/mmdetection3d/
 *.safetensors
 #Custom
 !/mnt/ve_share/hezijian/LLaMA-Factory
+!TrafficManager/data/data_template.pth
