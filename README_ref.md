@@ -1,10 +1,11 @@
-<a id="readme-top"></a>
+`<a id="readme-top"></a>`
 
 <!-- PROJECT LOGO -->
+
 <div align="center">
   <img src="assets/github-logo.png" alt="Logo" width="550">
-  
-  <p>
+
+<p>
     <a href="https://pjlab-adg.github.io/DriveArena/">
       <img src="https://img.shields.io/badge/Project-Page-green?style=for-the-badge" alt="Project Page" height="20">
     </a>
@@ -20,11 +21,10 @@
   <img src="assets/boston_thomas_park.gif" width="800" style="display: block; margin: 0 auto;">
   <img src="assets/singapore.gif" width="800" style="display: block; margin: 0 auto;">
   <img src="assets/boston.gif" width="800" style="display: block; margin: 0 auto;">
-	
 
-  <br>
+<br>
 
-  <p align="left">
+<p align="left">
     This is the official project repository of the paper <b>DriveArena: A Controllable Generative Simulation Platform for Autonomous Driving</b> and is mainly used for releasing schedules, updating instructions, sharing model weights, and handling issues. 
   </p>
 </div>
@@ -34,30 +34,28 @@
 > <sup>\*</sup> Equal Contribution <sup>†</sup> Corresponding Authors
 -->
 
+
+
 ---
 
 ### 🆕 Updates
+
 - **`2024-11-27:`** **DriveArena V1.2** is released. We now support evaluating driving performance of VAD.
-
 - **`2024-11-26:`** We have presented **Video Autoregression Dreamer** on [arXiv](https://arxiv.org/abs/2409.04003).
-
 - **`2024-11-07:`** **WorldDreamer V1.1** and the **pretrained weight trained on nuScenes and nuPlan** is released! We now support training and inference on **`nuScenes`** and **`nuPlan`** datasets.
-
 - **`2024-09-05:` 🎉🎉We are thrilled to announce the release of DriveArena V1.0! 🎉🎉**
 
   Join our [Google group](https://groups.google.com/g/drivearena) for the latest news and discussions.
-
 - **`2024-08-02:`** The paper is now available on [arXiv](https://arxiv.org/abs/2408.00415).
-
 - **`2024-07-30:`** We've launched the [official project page](https://pjlab-adg.github.io/DriveArena/) for DriveArena!
 
 ---
 
-
 ## Table of Contents:
+
 - [Table of Contents:](#table-of-contents)
 - [🤩 Running DriveArena](#-running-drivearena)
-- [:fire: Highlights](#fire-highlights)
+- [🔥 Highlights](#fire-highlights)
 - [🏁 Leaderboard of Driving Agents](#-leaderboard-of-driving-agents)
   - [1. Open-loop Evaluation Leaderboard](#1-open-loop-evaluation-leaderboard)
   - [2. Closed-loop Evaluation Leaderboard](#2-closed-loop-evaluation-leaderboard)
@@ -67,22 +65,19 @@
 - [📝 License](#-license)
 - [🔖 Citation](#-citation)
 
-
-
-
 ## 🤩 Running DriveArena
+
 **To run the closed-loop / open-loop simulation, please refer to the [[Documentation](docs/RUN_SIMULATION.md)|[中文说明](docs/RUN_SIMULATION_CN.md)].**
 
 Just for three steps, and you will be able to launch DriveArena as the window below:
-
 
 <div align="center">
   <img width=800px src="assets/simulation.png">
 </div>
 
-## :fire: Highlights
+## 🔥 Highlights
 
-<b> DriveArena </b> is a simulation platform that can
+`<b>` DriveArena `</b>` is a simulation platform that can
 
 * Provide closed-loop high-fidelity testing environments for vision-based driving agents.
 * Dynamically control the movement of all vehicles in the scenarios.
@@ -93,12 +88,11 @@ Just for three steps, and you will be able to launch DriveArena as the window be
   <img width=600px src="assets/pipeline_2.png">
 </div>
 
-The <b>DriveArena</b> is pretrained on nuScenes dataset. All kinds of vision-based driving agents, such as UniAD and VAD, can be combined with <b>DriveArena</b> to evaluate their actual driving performance in closed-loop realistic simulation environments.
-
+The `<b>`DriveArena`</b>` is pretrained on nuScenes dataset. All kinds of vision-based driving agents, such as UniAD and VAD, can be combined with `<b>`DriveArena`</b>` to evaluate their actual driving performance in closed-loop realistic simulation environments.
 
 ## 🏁 Leaderboard of Driving Agents
 
-We provide a leaderboard to present the driving performance evaluation of driving agents with our simulation platform. For the explanation of each evaluation metric, please check out our [paper]( ).
+We provide a leaderboard to present the driving performance evaluation of driving agents with our simulation platform. For the explanation of each evaluation metric, please check out our [paper]().
 
 ### 1. Open-loop Evaluation Leaderboard
 
@@ -185,43 +179,43 @@ We provide a leaderboard to present the driving performance evaluation of drivin
     </tr>
 </table>
 
-
 <!-- ROADMAP -->
+
 ## 📌 Roadmap
 
-- [x]  Demo Website Release
-- [x]  V1.0 Release
-    - [x]  Traffic Manager Code
-    - [x]  World Dreamer
-        - [x]  Inference Code
-        - [x]  Training Code
-        - [x]  Pretrained Weights
-    - [x]  Driving Agent Support
-      - [x]  UniAD
-- [x]  V1.1 Release
-    - [x] WorldDreamer
-        - [x]  Code for nuPlan
-        - [x]  Pretrained Model trained on nuScenes + nuPlan
-- [x]  V1.2 Release
-    - [x] Driving Agent Support
-      - [x] VAD
-- [ ]  Evaluation Code
+- [X] Demo Website Release
+- [X] V1.0 Release
+  - [X] Traffic Manager Code
+  - [X] World Dreamer
+    - [X] Inference Code
+    - [X] Training Code
+    - [X] Pretrained Weights
+  - [X] Driving Agent Support
+    - [X] UniAD
+- [X] V1.1 Release
+  - [X] WorldDreamer
+    - [X] Code for nuPlan
+    - [X] Pretrained Model trained on nuScenes + nuPlan
+- [X] V1.2 Release
+  - [X] Driving Agent Support
+    - [X] VAD
+- [ ] Evaluation Code
 - [ ] Development Tutorial
-- [ ]  Driving Agent Support
-    - [ ]  LeapAD
-- [ ]  Video Autoregression Dreamer
+- [ ] Driving Agent Support
+  - [ ] LeapAD
+- [ ] Video Autoregression Dreamer
 
 ## 🔍 Video Autoregression Dreamer (Coming Soon)
+
 **Video Autoregression Dreamer Capable of Producing Videos Exceeding 220 Frames**
-  <img src="assets/case_country.gif" width="800" style="display: block; margin: 0 auto;">
-  
+  `<img src="assets/case_country.gif" width="800" style="display: block; margin: 0 auto;">`
+
 **UniAD Performance**
 
-  <img src="assets/video-uniad.gif" width="500" style="display: block; margin: 0 auto;">
-  
-
+<img src="assets/DriveArene_assets/video-uniad.gif" width="500" style="display: block; margin: 0 auto;">
 
 <!-- ACKNOWLEDGMENTS -->
+
 ## Acknowledgments
 
 We utilized the following repos during development:
@@ -234,11 +228,13 @@ We utilized the following repos during development:
 Thanks for their Awesome open-sourced work!
 
 <!-- LICENSE -->
+
 ## 📝 License
 
 Distributed under the [Apache 2.0 license](./LICENSE).
 
 <!-- CONTACT -->
+
 ## 🔖 Citation
 
 If you find our paper and codes useful, please kindly cite us via:
