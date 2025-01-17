@@ -18,11 +18,11 @@ VLArena integrates the End-to-End Multimodal Model for Autonomous Driving (EMMA)
 
 ## Demo and Key Results 🎯
 
-<img src="assets/nup_night_3.gif" width="500" style="display: block; margin: 0 auto;">
+<img src="assets/nup_night_3.gif" width="1000" style="display: block; margin: 0 auto;">
 
-<img src="assets/nup_night_2.gif" width="500" style="display: block; margin: 0 auto;">
+<img src="assets/nup_night_2.gif" width="1000" style="display: block; margin: 0 auto;">
 
-<img src="assets/nus_night.gif" width="500" style="display: block; margin: 0 auto;">
+<img src="assets/nus_night.gif" width="1000" style="display: block; margin: 0 auto;">
 
 
 | Model             | L2(m)1s   | L2(m)2s   | L2(m)3s   | Avg L2(m) |
