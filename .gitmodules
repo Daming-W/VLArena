@@ -1,3 +1,4 @@
 [submodule "LLaMA-Factory"]
 	path = LLaMA-Factory
 	url = git@github.com:hzjian123/LLaMA-Factory
+	branch = main
