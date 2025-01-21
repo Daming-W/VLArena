@@ -48,6 +48,8 @@ The driving agent in VLArena is designed to leverage Multimodal Large Language M
 
 This project is developed based on LLaMA-Factory and uses various open-source pre-trained VLM solutions, such as Qwen2VL and LLaVA. Through the Chain-of-Thought (CoT) reasoning process, the agent generates detailed object descriptions, behavioral insights, and meta-driving decisions. It directly infers the necessary context required by the model to generate waypoints.
 
+![VLM agent schematic diagram](assets/EMMA.png)
+
 ## DriveArena Platform 🛠️
 
 Introduce the functionalities of DriveArena, how to use it, and its role within the project.
