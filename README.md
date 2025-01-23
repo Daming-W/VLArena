@@ -55,6 +55,8 @@ This project is developed based on LLaMA-Factory and uses various open-source pr
 ## DriveArena Platform 🛠️
 
 Introduce the functionalities of DriveArena, how to use it, and its role within the project.
+### Installation
+Please follow requirements folder for each environment. It is recommended to use one local machine for traffic simulation and two individual servers for VLM and video generative model respectively. For more detailed instructions, please follow DriveArene & LLaMA-Factory official repo for more details.
 
 ## Acknowledgement 🙏
 
