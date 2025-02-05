@@ -40,7 +40,9 @@ VLArena is the first closed-loop simulation system designed specifically for Vis
 
 ## Auto-Labeling Pipeline 🔖
 
-Describe the process, tools, and methods used for data auto-labeling. Code will be released soon.
+VLA/VLM/multimodal end-to-end autonomous driving relies on high-quality annotated data, especially natural language descriptions. These descriptions provide information across different dimensions and enhance the interpretability of the overall visual question-answering task.
+
+VLArena leverages commercially pre-trained multimodal large models (e.g., ChatGPT, ChatGLM) to construct a data pipeline for automated multi-faceted Q&A annotation in autonomous driving scenarios. This includes, but is not limited to, visual scene understanding QA, obstacle perception QA, intent recognition QA, and driving decision-making QA. Furthermore, our team is continuously exploring additional types of automated annotations to enhance the model's understanding of driving tasks.
 
 ## VLM for Autonomous Driving 🚗
 
