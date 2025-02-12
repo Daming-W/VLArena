@@ -24,8 +24,8 @@ VLArena integrates the End-to-End Multimodal Model for Autonomous Driving (EMMA)
 
 ### BEV Perception
 Model predictions are shown in vibrant colors, while the ground truth annotations are depicted in faded tones.
-<img src="assets/perception1" width="1000" style="display: block; margin: 0 auto;">
-<img src="assets/perception2" width="1000" style="display: block; margin: 0 auto;">
+<img src="assets/perception1.jpg" width="1000" style="display: block; margin: 0 auto;">
+<img src="assets/perception2.jpg" width="1000" style="display: block; margin: 0 auto;">
 
 ### Metrices
 | Model             | L2(m)1s   | L2(m)2s   | L2(m)3s   | Avg L2(m) |
