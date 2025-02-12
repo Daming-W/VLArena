@@ -17,14 +17,17 @@ VLArena integrates the End-to-End Multimodal Model for Autonomous Driving (EMMA)
   - [Acknowledgement 🙏](#acknowledgement-)
 
 ## Demo and Key Results 🎯
-
+### End-to-End planning and scene understanding
 <img src="assets/nup_night_3.gif" width="1000" style="display: block; margin: 0 auto;">
-
 <img src="assets/nup_night_2.gif" width="1000" style="display: block; margin: 0 auto;">
-
 <img src="assets/nus_night.gif" width="1000" style="display: block; margin: 0 auto;">
 
+### BEV Perception
+Model predictions are shown in vibrant colors, while the ground truth annotations are depicted in faded tones.
+<img src="assets/perception1" width="1000" style="display: block; margin: 0 auto;">
+<img src="assets/perception2" width="1000" style="display: block; margin: 0 auto;">
 
+### Metrices
 | Model             | L2(m)1s   | L2(m)2s   | L2(m)3s   | Avg L2(m) |
 | ----------------- | --------- | --------- | --------- | --------- |
 | UniAD             | 0.42      | 0.64      | 0.91      | 0.66      |
@@ -58,7 +61,11 @@ This project is developed based on LLaMA-Factory and uses various open-source pr
 
 Introduce the functionalities of DriveArena, how to use it, and its role within the project.
 ### Installation
-Please follow requirements folder for each environment. It is recommended to use one local machine for traffic simulation and two individual servers for VLM and video generative model respectively. For more detailed instructions, please follow DriveArene & LLaMA-Factory official repo for more details.
+Please refer to the 'requirements' folder for the environment setup. We recommend using a single local machine for traffic simulation and two separate servers for the VLM and video generative models, respectively, due to a CUDA version conflict. For more detailed instructions, please consult the official DriveArene and LLaMA-Factory repositories.
+
+### Running VLArena
+'''python tools/dreamer_fast_api_vlm.py --resume=ckpt/SDv1.5_mv_single_ref_nus_nup/weight-S200000  
+'''python scripts/fast_api.py
 
 ## Acknowledgement 🙏
 
