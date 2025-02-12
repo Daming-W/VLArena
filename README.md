@@ -65,17 +65,17 @@ Please refer to the 'requirements' folder for the environment setup. We recommen
 
 ### Running VLArena
 #### Step 1: Launch WorldDreamer Service
-'''shell
+```shell
 cd WorldDreamer && python tools/dreamer_fast_api_vlm.py --resume=path/to/your/weight
-'''
+```
 #### Step 2: Launch DrivingAgent Service
-'''shell
+```shell
 cd LLaMA-Factory && python scripts/fast_api.py
-'''
+```
 #### Step 3: Launch TrafficManager and Start Simulation
-'''shell
+```shell
 cd TrafficManager && PYTHONPATH=$(pwd) python ./TrafficManager/sim_manager_vlm.py
-'''
+```
 ## Acknowledgement 🙏
 
 Express gratitude to individuals or organizations that provided support during the project's development.
