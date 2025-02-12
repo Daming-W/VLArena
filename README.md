@@ -64,9 +64,12 @@ Introduce the functionalities of DriveArena, how to use it, and its role within 
 Please refer to the 'requirements' folder for the environment setup. We recommend using a single local machine for traffic simulation and two separate servers for the VLM and video generative models, respectively, due to a CUDA version conflict. For more detailed instructions, please consult the official DriveArene and LLaMA-Factory repositories.
 
 ### Running VLArena
-'''python tools/dreamer_fast_api_vlm.py --resume=ckpt/SDv1.5_mv_single_ref_nus_nup/weight-S200000  
-'''python scripts/fast_api.py
-
+#### Step 1: Launch WorldDreamer Service
+shell'''cd WorldDreamer && python tools/dreamer_fast_api_vlm.py --resume=path/to/your/weight'''
+#### Step 2: Launch DrivingAgent Service
+shell'''cd LLaMA-Factory && python scripts/fast_api.py'''
+#### Step 3: Launch TrafficManager and Start Simulation
+shell'''cd TrafficManager && PYTHONPATH=$(pwd) python ./TrafficManager/sim_manager_vlm.py'''
 ## Acknowledgement 🙏
 
 Express gratitude to individuals or organizations that provided support during the project's development.
