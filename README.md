@@ -63,6 +63,7 @@ Introduce the functionalities of DriveArena, how to use it, and its role within 
 <div align="center">
   <img src="assets/VLArena.jpg" alt="VLM agent schematic diagram" width="500"/>
 </div>
+
 ### Installation
 Please refer to the 'requirements' folder for the environment setup. We recommend using a single local machine for traffic simulation and two separate servers for the VLM and video generative models, respectively, due to a CUDA version conflict. For more detailed instructions, please consult the official DriveArene and LLaMA-Factory repositories.
 
