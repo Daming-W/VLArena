@@ -66,7 +66,8 @@ Introduce the functionalities of DriveArena, how to use it, and its role within 
 
 ### Installation
 Please refer to the 'requirements' folder for the environment setup. We recommend using a single local machine for traffic simulation and two separate servers for the VLM and video generative models, respectively, due to a CUDA version conflict. For more detailed instructions, please consult the official DriveArene and LLaMA-Factory repositories.
-
+#### Checkpoints
+In addition to video generative models, please download VLM checkpoint through [Hugging Face](https://huggingface.co/Eachannn/VLArena) and modify corresponding path in `fast_api.py`.
 ### Running VLArena
 #### Step 1: Launch WorldDreamer Service
 ```shell
