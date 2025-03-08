@@ -17,10 +17,13 @@ VLArena integrates the End-to-End Multimodal Model for Autonomous Driving (EMMA)
   - [Acknowledgement 🙏](#acknowledgement-)
 
 ## Demo and Key Results 🎯
-### End-to-End planning and scene understanding
+### End-to-End planning & scene understanding
 <img src="assets/nup_night_3.gif" width="1000" style="display: block; margin: 0 auto;">
 <img src="assets/nup_night_2.gif" width="1000" style="display: block; margin: 0 auto;">
 <img src="assets/nus_night.gif" width="1000" style="display: block; margin: 0 auto;">
+
+### End-to-End planning 
+<img src="assets/nus_planning_1.gif" width="1000" style="display: block; margin: 0 auto;">
 
 ### BEV Perception
 Model predictions are shown in vibrant colors, while the ground truth annotations are depicted in faded tones.
